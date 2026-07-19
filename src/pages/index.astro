@@ -2,47 +2,65 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import FormattedDate from '../components/FormattedDate.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			.bg-grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(#232d3b 1px,transparent 1px),linear-gradient(90deg,#232d3b 1px,transparent 1px);background-size:64px 64px;opacity:.10;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 90% 50% at 50% 0%,#000 20%,transparent 80%);mask-image:radial-gradient(ellipse 90% 50% at 50% 0%,#000 20%,transparent 80%);}
+			main{width:100%;max-width:1120px;margin:0 auto;padding:0 28px;position:relative;z-index:2;}
+			.hero{padding:80px 0 40px;}
+			.eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#e0a53d;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+			.eyebrow::before{content:"";width:26px;height:1px;background:#8a6f3a;}
+			.hero h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.2rem,4.6vw,3.4rem);line-height:1.08;letter-spacing:-.02em;margin:0 0 18px;max-width:20ch;color:#e6edf5;}
+			.hero p{font-size:1.12rem;color:#9aa8ba;max-width:56ch;margin:0;}
+			.posts{padding:40px 0 90px;}
+			.post-list{display:flex;flex-direction:column;gap:1px;background:#232d3b;border:1px solid #232d3b;list-style:none;margin:0;padding:0;}
+			.post-item{margin:0;}
+			.post{display:block;background:#111823;padding:32px 34px;transition:background .25s;position:relative;overflow:hidden;text-decoration:none;}
+			.post::after{content:"";position:absolute;left:0;top:0;height:100%;width:2px;background:#5b8dc7;transform:scaleY(0);transition:transform .3s;transform-origin:top;}
+			.post:hover{background:#161e2b;}
+			.post:hover::after{transform:scaleY(1);}
+			.post .date{font-family:'JetBrains Mono',monospace;font-size:12px;color:#5f6b7c;letter-spacing:.03em;margin-bottom:12px;}
+			.post h2{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:600;margin:0 0 10px;line-height:1.25;color:#e6edf5;}
+			.post p{color:#9aa8ba;font-size:1rem;max-width:70ch;margin:0 0 16px;}
+			.post .more{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#7db0e8;letter-spacing:.03em;}
+			.soon{margin-top:34px;border:1px dashed #2d3a4c;padding:26px 30px;text-align:center;color:#5f6b7c;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.03em;}
+		</style>
 	</head>
 	<body>
+		<div class="bg-grid"></div>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<section class="hero">
+				<div class="eyebrow">The blog</div>
+				<h1>Building, breaking &amp; learning &mdash; out loud.</h1>
+				<p>Write-ups from my journey into cybersecurity, automation and AI. Real projects, honest lessons, and the occasional thing that broke before it worked.</p>
+			</section>
+			<section class="posts">
+				<ul class="post-list">
+					{posts.map((post) => (
+						<li class="post-item">
+							<a class="post" href={`/blog/${post.id}/`}>
+								<div class="date"><FormattedDate date={post.data.pubDate} /></div>
+								<h2>{post.data.title}</h2>
+								<p>{post.data.description}</p>
+								<span class="more">Read the post &rarr;</span>
+							</a>
+						</li>
+					))}
+				</ul>
+				<div class="soon">More write-ups coming &mdash; security labs, Python tools, and the road to eJPT.</div>
+			</section>
 		</main>
 		<Footer />
 	</body>

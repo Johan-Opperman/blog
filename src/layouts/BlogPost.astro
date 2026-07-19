@@ -1,68 +1,83 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-
 type Props = CollectionEntry<'blog'>['data'];
-
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate } = Astro.props;
 ---
 
 <html lang="en">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
+			:root{
+				--bg:#0d1117;--bg-2:#111823;--bg-3:#161e2b;
+				--line:#232d3b;--line-2:#2d3a4c;
+				--ink:#e6edf5;--ink-dim:#9aa8ba;--ink-faint:#5f6b7c;
+				--steel:#5b8dc7;--steel-bright:#7db0e8;
+				--amber:#e0a53d;--amber-dim:#8a6f3a;
 			}
-			.hero-image {
-				width: 100%;
+			body{background:var(--bg);color:var(--ink);}
+			main{width:100%;max-width:100%;margin:0;padding:0;}
+			.article{padding:60px 0 90px;position:relative;z-index:2;}
+			.prose{
+				width:720px;max-width:calc(100% - 3em);margin:0 auto;padding:0 1.5em;
 			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+			.back{
+				font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-dim);
+				display:inline-flex;align-items:center;gap:8px;margin-bottom:34px;text-decoration:none;
 			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+			.back:hover{color:var(--steel-bright);}
+			.title{margin-bottom:20px;padding:0;text-align:left;line-height:1.1;}
+			.date{
+				font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-faint);
+				letter-spacing:.03em;margin-bottom:18px;
 			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+			.last-updated-on{font-style:italic;color:var(--ink-faint);margin-top:4px;}
+			.title h1{
+				font-family:'Space Grotesk',sans-serif;font-weight:700;
+				font-size:clamp(2rem,4.4vw,2.9rem);line-height:1.12;letter-spacing:-.02em;
+				margin:0 0 22px 0;color:var(--ink);
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
+			.title hr{border:none;border-top:1px solid var(--line);margin:0;}
+			/* the actual post content (Markdown) */
+			.prose :global(p){font-size:1.08rem;color:#c4d0de;margin:0 0 22px;line-height:1.75;}
+			.prose :global(h2){
+				font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.55rem;
+				letter-spacing:-.01em;margin:44px 0 16px;line-height:1.25;color:var(--ink);
 			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+			.prose :global(h3){
+				font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.2rem;
+				margin:32px 0 12px;color:var(--ink);
 			}
-			.last-updated-on {
-				font-style: italic;
+			.prose :global(strong){color:var(--ink);font-weight:600;}
+			.prose :global(a){color:var(--steel-bright);}
+			.prose :global(ul),.prose :global(ol){margin:0 0 22px 4px;padding-left:20px;}
+			.prose :global(li){color:#c4d0de;font-size:1.08rem;margin-bottom:10px;line-height:1.7;}
+			.prose :global(blockquote){
+				border-left:2px solid var(--amber);background:var(--bg-2);
+				padding:16px 22px;margin:28px 0;border-radius:0 4px 4px 0;color:var(--ink-dim);
 			}
+			.prose :global(code){
+				font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--bg-3);
+				border:1px solid var(--line);padding:2px 7px;border-radius:3px;color:var(--steel-bright);
+			}
+			.prose :global(pre){
+				background:var(--bg-2);border:1px solid var(--line);border-radius:6px;
+				padding:18px 20px;overflow-x:auto;margin:0 0 24px;
+			}
+			.prose :global(pre code){background:none;border:none;padding:0;color:var(--ink-dim);}
+			.prose :global(img){border-radius:8px;margin:24px 0;max-width:100%;}
 		</style>
 	</head>
-
 	<body>
 		<Header />
 		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
+			<article class="article">
 				<div class="prose">
+					<a class="back" href="/">&larr; All posts</a>
 					<div class="title">
 						<div class="date">
 							<FormattedDate date={pubDate} />
